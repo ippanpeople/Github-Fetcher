@@ -1,4 +1,5 @@
 import requests
+import json
 
 def get_data(url):
     headers = {
@@ -20,15 +21,24 @@ def get_all_repo(name): # 某人所有的repo
     all_repos = [] # repos's name数据存放数组
 
     try:
+        all_commits = 0
         for item in json_data:
             repo = item['name']
+            # print(repo)
+            repo_commits = len(get_data("https://api.github.com/repos/ippanpeople/%s/commits"%(repo)))
             all_repos.append(repo)
-        print(all_repos) # 某用户的所有repo列表
-        print( "the %s totally has %d repos" %(name,len(all_repos)) )
-        return name,all_repos
+            all_commits += repo_commits
+        # print(all_repos) # 某用户的所有repo列表
+        # print( "the %s totally has %d repos and %d commits" %(name,len(all_repos), all_commits) )
+        return name, all_repos, all_commits
 
     except Exception as e:
             print(e)
 
 if __name__ == "__main__":
-    print(get_data("https://api.github.com/repos/ippanpeople/Nginx_Configration/commits"))
+    # date = json.loads(get_data("https://api.github.com/repos/ippanpeople/Github-Fetcher/commits"))
+    # print(type(date))
+    # print(len(date))
+    # print(type(get_all_repo("ippanpeople")))
+    github_info = get_all_repo("ippanpeople")
+    print("the %s totally has %d repos and %d commits" %(github_info[0],len(github_info[1]), github_info[2]))
